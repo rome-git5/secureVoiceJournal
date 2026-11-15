@@ -1,0 +1,365 @@
+/* Lock Screen */
+.lock-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.lock-card {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+  border-radius: 24px;
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.lock-badge {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(var(--ion-color-primary-rgb), 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.lock-icon {
+  font-size: 36px;
+}
+
+.lock-subtitle {
+  color: var(--ion-color-medium);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.pin-input-box {
+  width: 180px;
+  margin-bottom: 12px;
+  --background: var(--ion-color-light);
+  border-radius: 14px;
+}
+
+.pin-field {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 8px;
+}
+
+.pin-error {
+  color: var(--ion-color-danger);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.unlock-btn {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Header & Navigation Tabs */
+.app-title {
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.nav-segment {
+  margin: 0 16px 8px;
+  border-radius: 12px;
+}
+
+/* Page 1: Recording Studio */
+.studio-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.studio-card {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 28px 20px;
+  border-radius: 28px;
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.timer-display {
+  font-size: 46px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  color: var(--ion-text-color);
+  transition: color 0.2s ease;
+}
+
+.timer-active {
+  color: var(--ion-color-danger);
+}
+
+.status-text {
+  margin: 6px 0 22px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+}
+
+.mic-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+
+.mic-btn {
+  --border-radius: 50%;
+  width: 80px;
+  height: 80px;
+}
+
+.pause-btn {
+  --border-radius: 50%;
+  width: 52px;
+  height: 52px;
+}
+
+.mic-icon {
+  font-size: 32px;
+}
+
+.save-hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ion-color-danger);
+  margin-bottom: 14px;
+}
+
+.recording-pulse {
+  animation: pulse-ring 1.2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(235, 68, 90, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(235, 68, 90, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(235, 68, 90, 0);
+  }
+}
+
+.studio-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+  text-align: left;
+}
+
+.clean-input-item {
+  --background: var(--ion-color-light);
+  --border-radius: 14px;
+  border-radius: 14px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+.category-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* Page 2: Saved Logs Library */
+.logs-wrapper {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.modern-searchbar {
+  --border-radius: 14px;
+  padding: 0 0 8px;
+}
+
+.filter-bar {
+  display: flex;
+  overflow-x: auto;
+  gap: 4px;
+  padding-bottom: 12px;
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--ion-color-medium);
+  padding: 48px 16px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.modern-entry-card {
+  margin: 0 0 14px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+}
+
+.card-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.title-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry-heading {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  margin-top: -6px;
+  margin-right: -8px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.pill-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(var(--ion-color-primary-rgb), 0.12);
+  color: var(--ion-color-primary);
+}
+
+.pill-duration {
+  background: var(--ion-color-light);
+  color: var(--ion-color-medium);
+}
+
+.entry-description {
+  margin: 0 0 12px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--ion-color-medium);
+  white-space: pre-line;
+}
+
+.audio-player {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+}
+
+/* Solid, Modern Bottom Sheet Edit Modal */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.sheet-panel {
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 28px 28px 0 0;
+  padding: 12px 22px 28px;
+  box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.14);
+  animation: slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:host-context(.ion-palette-dark) .sheet-panel,
+:host-context(.ion-palette-dark) .lock-card,
+:host-context(.ion-palette-dark) .studio-card {
+  background: #1e1e1e;
+  color: #f8fafc;
+}
+
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.sheet-handle {
+  width: 38px;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--ion-color-medium);
+  opacity: 0.35;
+  margin: 0 auto 10px;
+}
+
+.sheet-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.sheet-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-save-btn {
+  margin-top: 10px;
+  --border-radius: 14px;
+  height: 46px;
+  font-weight: 600;
+}

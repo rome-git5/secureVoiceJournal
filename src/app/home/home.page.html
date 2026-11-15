@@ -1,0 +1,324 @@
+<!-- 1. SECURITY LOCK SCREEN (STANDARD AUTO-UNLOCK ON 4TH DIGIT) -->
+@if (!isUnlocked) {
+  <div class="lock-container">
+    <div class="lock-card">
+      <div class="lock-badge">
+        <ion-icon name="lock-closed" color="primary" class="lock-icon"></ion-icon>
+      </div>
+      <h2>{{ hasPinSet ? 'Enter PIN' : 'Set Your PIN' }}</h2>
+      <p class="lock-subtitle">
+        {{ hasPinSet ? 'Enter your 4-digit PIN or use Fingerprint' : 'Create a 4-digit PIN to secure your voice journal' }}
+      </p>
+
+      <ion-item lines="none" class="pin-input-box">
+        <ion-input
+          type="password"
+          inputmode="numeric"
+          maxlength="4"
+          placeholder="••••"
+          class="pin-field"
+          [value]="pinInput"
+          (ionInput)="onPinDigitInput($any($event.target).value)">
+        </ion-input>
+      </ion-item>
+
+      @if (pinError) {
+        <p class="pin-error">{{ pinError }}</p>
+      }
+
+      @if (hasPinSet) {
+        <ion-button shape="round" fill="outline" expand="block" class="unlock-btn" (click)="unlockWithBiometrics()">
+          <ion-icon slot="start" name="finger-print"></ion-icon>
+          Use Biometrics
+        </ion-button>
+      }
+    </div>
+  </div>
+}
+
+<!-- 2. UNLOCKED APP -->
+@if (isUnlocked) {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-title class="app-title">Voice Journal</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="toggleDarkMode()" aria-label="Toggle Dark Mode">
+          <ion-icon slot="icon-only" name="contrast"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+
+    <ion-toolbar>
+      <ion-segment [value]="activeTab" (ionChange)="switchTab($any($event.detail).value)" class="nav-segment">
+        <ion-segment-button value="record">
+          <ion-label>Record</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="logs">
+          <ion-label>Saved Logs ({{ entries.length }})</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="ion-padding">
+    <!-- PAGE 1: RECORDING STUDIO WITH SEPARATE TITLE & DESCRIPTION -->
+    @if (activeTab === 'record') {
+      <div class="studio-wrapper">
+        <div class="studio-card">
+          <div class="timer-display" [class.timer-active]="isRecording && !isPaused">
+            {{ formatDuration(recordingSeconds) }}
+          </div>
+
+          <p class="status-text">
+            @if (isRecording) {
+              {{ isPaused ? 'Recording Paused' : 'Listening via Microphone...' }}
+            } @else {
+              Tap mic to start recording
+            }
+          </p>
+
+          <div class="mic-controls-row">
+            @if (!isRecording) {
+              <ion-button
+                shape="round"
+                color="primary"
+                [disabled]="isBusy"
+                (click)="startNewRecording($event)"
+                class="mic-btn"
+                aria-label="Start Recording">
+                <ion-icon name="mic" class="mic-icon"></ion-icon>
+              </ion-button>
+            } @else {
+              <ion-button
+                shape="round"
+                color="danger"
+                [disabled]="isBusy"
+                (click)="stopAndSaveRecording($event)"
+                [class.recording-pulse]="!isPaused"
+                class="mic-btn"
+                aria-label="Stop and Save Recording">
+                <ion-icon name="checkmark" class="mic-icon"></ion-icon>
+              </ion-button>
+
+              <ion-button
+                shape="round"
+                color="warning"
+                [disabled]="isBusy"
+                (click)="togglePauseResume($event)"
+                class="pause-btn"
+                aria-label="Pause or Resume Recording">
+                <ion-icon slot="icon-only" [name]="isPaused ? 'play' : 'pause'"></ion-icon>
+              </ion-button>
+            }
+          </div>
+
+          @if (isRecording) {
+            <span class="save-hint">Tap checkmark to finish & save</span>
+          }
+
+          <!-- SEPARATE TITLE, DESCRIPTION & TAG INPUTS -->
+          <div class="studio-form">
+            <ion-item lines="none" class="clean-input-item">
+              <ion-input
+                label="Title"
+                labelPlacement="stacked"
+                placeholder="e.g., Morning Lecture Notes"
+                [value]="newEntryTitle"
+                (ionInput)="newEntryTitle = $any($event.target).value">
+              </ion-input>
+            </ion-item>
+
+            <ion-item lines="none" class="clean-input-item">
+              <ion-textarea
+                label="Description / Note"
+                labelPlacement="stacked"
+                rows="3"
+                placeholder="Add summary or key points..."
+                [value]="newEntryDescription"
+                (ionInput)="newEntryDescription = $any($event.target).value">
+              </ion-textarea>
+            </ion-item>
+
+            <div class="category-selector">
+              @for (cat of categories; track cat) {
+                <ion-chip
+                  [color]="selectedNewCategory === cat ? 'primary' : 'medium'"
+                  [outline]="selectedNewCategory !== cat"
+                  (click)="selectedNewCategory = cat">
+                  <ion-label>{{ cat }}</ion-label>
+                </ion-chip>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- PAGE 2: CLEAN SAVED RECORDINGS LIBRARY -->
+    @if (activeTab === 'logs') {
+      <div class="logs-wrapper">
+        <ion-searchbar
+          placeholder="Search titles or descriptions..."
+          [value]="searchQuery"
+          (ionInput)="onSearchChange($any($event.target).value)"
+          class="modern-searchbar">
+        </ion-searchbar>
+
+        <div class="filter-bar">
+          @for (tab of filterTabs; track tab) {
+            <ion-chip
+              [color]="activeFilter === tab ? 'primary' : 'medium'"
+              [outline]="activeFilter !== tab"
+              (click)="selectFilter(tab)">
+              <ion-label>{{ tab }}</ion-label>
+            </ion-chip>
+          }
+        </div>
+
+        @if (entries.length === 0) {
+          <div class="empty-state">
+            <ion-icon name="mic-outline" class="empty-icon"></ion-icon>
+            <h3>No Saved Recordings</h3>
+            <p>Switch to the Record tab to capture your first voice note.</p>
+            <ion-button shape="round" size="small" (click)="switchTab('record')">
+              Go to Recorder
+            </ion-button>
+          </div>
+        }
+
+        @for (entry of entries; track entry.id) {
+          <ion-card class="modern-entry-card">
+            <ion-card-header>
+              <div class="card-header-row">
+                <div class="title-block">
+                  <h3 class="entry-heading">{{ entry.title }}</h3>
+                  <div class="meta-row">
+                    <span class="pill-badge">{{ entry.category }}</span>
+                    <span class="pill-badge pill-duration">{{ formatDurationFromMs(entry.duration_ms) }}</span>
+                  </div>
+                </div>
+
+                <div class="header-actions">
+                  <ion-button fill="clear" size="small" color="warning" (click)="toggleFavorite(entry)" aria-label="Pin Favorite">
+                    <ion-icon slot="icon-only" [name]="entry.is_favorite === 1 ? 'star' : 'star-outline'"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="medium" (click)="openEditModal(entry)" aria-label="Edit Title and Note">
+                    <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="primary" (click)="shareEntry(entry)" aria-label="Share Entry">
+                    <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="danger" (click)="requestDeleteEntry(entry)" aria-label="Delete Entry">
+                    <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-header>
+
+            <ion-card-content>
+              @if (entry.text_note) {
+                <p class="entry-description">{{ entry.text_note }}</p>
+              }
+
+              <audio
+                controls
+                preload="metadata"
+                [src]="entry.playableUrl"
+                (play)="onAudioPlay($event)"
+                (pause)="onAudioEndedOrPaused($event)"
+                (ended)="onAudioEndedOrPaused($event)"
+                class="audio-player">
+              </audio>
+            </ion-card-content>
+          </ion-card>
+        }
+      </div>
+    }
+
+    <!-- ACCESSIBLE BOTTOM SHEET FOR EDITING TITLE, DESCRIPTION & CATEGORY -->
+    @if (editingEntry !== null) {
+      <div
+        class="sheet-backdrop"
+        role="button"
+        tabindex="0"
+        aria-label="Close Edit Sheet"
+        (click)="closeEditModal()"
+        (keydown.escape)="closeEditModal()"
+        (keyup.enter)="closeEditModal()">
+        <div
+          class="sheet-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Edit Recording"
+          (click)="$event.stopPropagation()"
+          (keydown)="$event.stopPropagation()"
+          (keyup)="$event.stopPropagation()">
+          <div class="sheet-handle"></div>
+
+          <div class="sheet-header">
+            <ion-button fill="clear" size="small" color="medium" (click)="closeEditModal()">Cancel</ion-button>
+            <h3 class="sheet-title">Edit Recording</h3>
+            <ion-button fill="clear" size="small" [strong]="true" (click)="saveEditedEntry()">Save</ion-button>
+          </div>
+
+          <div class="modal-form">
+            <ion-item lines="none" class="clean-input-item">
+              <ion-input
+                label="Title"
+                labelPlacement="stacked"
+                placeholder="Enter recording title"
+                [value]="editTitle"
+                (ionInput)="editTitle = $any($event.target).value">
+              </ion-input>
+            </ion-item>
+
+            <ion-item lines="none" class="clean-input-item">
+              <ion-textarea
+                label="Description / Note"
+                labelPlacement="stacked"
+                rows="3"
+                placeholder="Write description or notes..."
+                [value]="editDescription"
+                (ionInput)="editDescription = $any($event.target).value">
+              </ion-textarea>
+            </ion-item>
+
+            <span class="section-label">CATEGORY</span>
+            <div class="category-selector">
+              @for (cat of categories; track cat) {
+                <ion-chip
+                  [color]="editCategory === cat ? 'primary' : 'medium'"
+                  [outline]="editCategory !== cat"
+                  (click)="editCategory = cat">
+                  <ion-label>{{ cat }}</ion-label>
+                </ion-chip>
+              }
+            </div>
+
+            <ion-button expand="block" shape="round" class="modal-save-btn" (click)="saveEditedEntry()">
+              Save Changes
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- NATIVE DELETE CONFIRMATION ALERT -->
+    <ion-alert
+      [isOpen]="entryPendingDelete !== null"
+      header="Delete Voice Log?"
+      message="This will permanently remove the audio file and its attached notes."
+      [buttons]="deleteAlertButtons"
+      (didDismiss)="entryPendingDelete = null">
+    </ion-alert>
+
+    <!-- NATIVE FEEDBACK TOAST -->
+    <ion-toast
+      [isOpen]="isToastOpen"
+      [message]="toastMessage"
+      duration="2000"
+      position="bottom"
+      (didDismiss)="isToastOpen = false">
+    </ion-toast>
+  </ion-content>
+}

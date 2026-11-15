@@ -1,0 +1,7 @@
+{
+  "name": "secureVoiceJournal",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
