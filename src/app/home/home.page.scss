@@ -1,202 +1,225 @@
-/* Lock Screen */
+/* ==================== LOCK SCREEN ==================== */
 .lock-container {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
   display: flex;
-  justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  justify-content: center;
   padding: 24px;
+  background: var(--ion-background-color, #f4f5f8);
 }
 
 .lock-card {
   width: 100%;
   max-width: 360px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 32px 24px;
+  padding: 28px 22px;
   border-radius: 24px;
   background: var(--ion-card-background, #ffffff);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .lock-badge {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
   border-radius: 50%;
-  background: rgba(var(--ion-color-primary-rgb), 0.12);
+  background: rgba(56, 128, 255, 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
 }
 
 .lock-icon {
-  font-size: 36px;
+  font-size: 30px;
+}
+
+.lock-card h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--ion-text-color, #1e2023);
 }
 
 .lock-subtitle {
-  color: var(--ion-color-medium);
-  font-size: 14px;
-  margin-bottom: 20px;
+  margin: 0 0 18px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ion-color-medium, #666b73);
 }
 
 .pin-input-box {
-  width: 180px;
-  margin-bottom: 12px;
-  --background: var(--ion-color-light);
+  --background: rgba(120, 120, 128, 0.12);
+  --border-radius: 14px;
+  margin: 0 0 12px;
+  border: 2px solid var(--ion-color-primary, #3880ff);
   border-radius: 14px;
+  min-height: 54px;
 }
 
 .pin-field {
   text-align: center;
   font-size: 24px;
-  letter-spacing: 8px;
+  font-weight: 700;
+  letter-spacing: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
 }
 
 .pin-error {
-  color: var(--ion-color-danger);
+  color: var(--ion-color-danger, #eb445a);
   font-size: 13px;
-  margin-bottom: 12px;
+  margin: 4px 0 12px;
 }
 
 .unlock-btn {
-  width: 100%;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
-/* Header & Navigation Tabs */
+/* ==================== HEADER & TABS ==================== */
 .app-title {
   font-weight: 700;
-  letter-spacing: -0.3px;
+  font-size: 20px;
 }
 
 .nav-segment {
-  margin: 0 16px 8px;
-  border-radius: 12px;
+  padding: 0 12px;
 }
 
-/* Page 1: Recording Studio */
-.studio-wrapper {
+.nav-segment ion-segment-button {
   display: flex;
+  align-items: center;
   justify-content: center;
-  padding-top: 8px;
+  text-align: center;
+}
+
+.nav-segment ion-segment-button ion-label {
+  width: 100%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* ==================== RECORDING STUDIO ==================== */
+.studio-wrapper {
+  max-width: 460px;
+  margin: 8px auto;
 }
 
 .studio-card {
-  width: 100%;
-  max-width: 440px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 28px 20px;
-  border-radius: 28px;
+  padding: 26px 20px;
+  border-radius: 24px;
   background: var(--ion-card-background, #ffffff);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  text-align: center;
 }
 
 .timer-display {
-  font-size: 46px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-size: 48px;
+  font-weight: 800;
   letter-spacing: 1px;
-  color: var(--ion-text-color);
+  color: var(--ion-text-color, #1e2023);
   transition: color 0.2s ease;
 }
 
-.timer-active {
-  color: var(--ion-color-danger);
+.timer-display.timer-active {
+  color: var(--ion-color-danger, #eb445a);
 }
 
 .status-text {
   margin: 6px 0 22px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--ion-color-medium);
+  font-size: 13px;
+  color: var(--ion-color-medium, #666b73);
 }
 
 .mic-controls-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  margin-bottom: 12px;
+  gap: 16px;
+  margin-bottom: 14px;
 }
 
 .mic-btn {
+  width: 76px;
+  height: 76px;
   --border-radius: 50%;
-  width: 80px;
-  height: 80px;
-}
-
-.pause-btn {
-  --border-radius: 50%;
-  width: 52px;
-  height: 52px;
+  --padding-start: 0;
+  --padding-end: 0;
 }
 
 .mic-icon {
   font-size: 32px;
 }
 
+.pause-btn {
+  width: 52px;
+  height: 52px;
+  --border-radius: 50%;
+  --padding-start: 0;
+  --padding-end: 0;
+}
+
 .save-hint {
+  display: block;
   font-size: 12px;
-  font-weight: 600;
-  color: var(--ion-color-danger);
+  color: var(--ion-color-medium, #666b73);
   margin-bottom: 14px;
 }
 
 .recording-pulse {
-  animation: pulse-ring 1.2s infinite;
+  animation: pulseRing 1.4s infinite ease-in-out;
 }
 
-@keyframes pulse-ring {
+@keyframes pulseRing {
   0% {
-    box-shadow: 0 0 0 0 rgba(235, 68, 90, 0.55);
+    transform: scale(1);
   }
-  70% {
-    box-shadow: 0 0 0 18px rgba(235, 68, 90, 0);
+  50% {
+    transform: scale(1.06);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(235, 68, 90, 0);
+    transform: scale(1);
   }
 }
 
 .studio-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 12px;
+  margin-top: 14px;
   text-align: left;
 }
 
 .clean-input-item {
-  --background: var(--ion-color-light);
+  --background: rgba(120, 120, 128, 0.1);
   --border-radius: 14px;
   border-radius: 14px;
-}
-
-.section-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: var(--ion-color-medium);
-  margin-top: 4px;
+  margin-bottom: 12px;
 }
 
 .category-selector {
   display: flex;
   flex-wrap: wrap;
+  gap: 8px;
   justify-content: center;
-  gap: 6px;
-  margin-top: 2px;
+  margin-top: 8px;
 }
 
-/* Page 2: Saved Logs Library */
+.category-selector ion-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  height: 32px;
+  margin: 0;
+}
+
+.category-selector ion-chip ion-label {
+  text-align: center;
+  margin: 0;
+}
+
+/* ==================== SAVED LOGS ==================== */
 .logs-wrapper {
-  max-width: 600px;
+  max-width: 520px;
   margin: 0 auto;
 }
 
@@ -207,27 +230,50 @@
 
 .filter-bar {
   display: flex;
+  align-items: center;
+  gap: 8px;
   overflow-x: auto;
-  gap: 4px;
-  padding-bottom: 12px;
+  padding: 2px 2px 12px;
+  margin-bottom: 6px;
+  scrollbar-width: none;
+}
+
+.filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-bar ion-chip {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  height: 32px;
+  margin: 0;
+}
+
+.filter-bar ion-chip ion-label {
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;
+  line-height: 1;
 }
 
 .empty-state {
   text-align: center;
-  color: var(--ion-color-medium);
   padding: 48px 16px;
+  color: var(--ion-color-medium, #666b73);
 }
 
 .empty-icon {
-  font-size: 48px;
-  margin-bottom: 12px;
-  opacity: 0.6;
+  font-size: 46px;
+  margin-bottom: 8px;
 }
 
 .modern-entry-card {
+  border-radius: 18px;
   margin: 0 0 14px;
-  border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
 }
 
 .card-header-row {
@@ -237,51 +283,47 @@
   gap: 8px;
 }
 
-.title-block {
-  flex: 1;
-  min-width: 0;
-}
-
 .entry-heading {
-  margin: 0;
+  margin: 0 0 6px;
   font-size: 16px;
   font-weight: 700;
-  color: var(--ion-text-color);
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 5px 11px;
+  border-radius: 12px;
+  background: rgba(56, 128, 255, 0.14);
+  color: var(--ion-color-primary, #3880ff);
+}
+
+.pill-duration {
+  background: rgba(120, 120, 128, 0.14);
+  color: var(--ion-color-medium, #666b73);
 }
 
 .header-actions {
   display: flex;
   align-items: center;
-  margin-top: -6px;
-  margin-right: -8px;
-}
-
-.meta-row {
-  display: flex;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.pill-badge {
-  font-size: 11px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: rgba(var(--ion-color-primary-rgb), 0.12);
-  color: var(--ion-color-primary);
-}
-
-.pill-duration {
-  background: var(--ion-color-light);
-  color: var(--ion-color-medium);
 }
 
 .entry-description {
   margin: 0 0 12px;
   font-size: 14px;
   line-height: 1.45;
-  color: var(--ion-color-medium);
-  white-space: pre-line;
 }
 
 .audio-player {
@@ -290,13 +332,12 @@
   border-radius: 10px;
 }
 
-/* Solid, Modern Bottom Sheet Edit Modal */
+/* ==================== EDIT BOTTOM SHEET ==================== */
 .sheet-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(4px);
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -304,62 +345,43 @@
 
 .sheet-panel {
   width: 100%;
-  max-width: 500px;
-  background: #ffffff;
-  color: #1e293b;
-  border-radius: 28px 28px 0 0;
-  padding: 12px 22px 28px;
-  box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.14);
-  animation: slide-up 0.22s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-:host-context(.ion-palette-dark) .sheet-panel,
-:host-context(.ion-palette-dark) .lock-card,
-:host-context(.ion-palette-dark) .studio-card {
-  background: #1e1e1e;
-  color: #f8fafc;
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+  max-width: 520px;
+  padding: 12px 20px 28px;
+  border-radius: 24px 24px 0 0;
+  background: var(--ion-card-background, #ffffff);
+  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.15);
 }
 
 .sheet-handle {
-  width: 38px;
+  width: 40px;
   height: 4px;
-  border-radius: 999px;
-  background: var(--ion-color-medium);
-  opacity: 0.35;
+  border-radius: 4px;
+  background: rgba(120, 120, 128, 0.35);
   margin: 0 auto 10px;
 }
 
 .sheet-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 14px;
 }
 
 .sheet-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
 }
 
-.modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.section-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--ion-color-medium, #666b73);
+  margin: 8px 0 4px;
 }
 
 .modal-save-btn {
-  margin-top: 10px;
-  --border-radius: 14px;
-  height: 46px;
-  font-weight: 600;
+  margin-top: 18px;
 }

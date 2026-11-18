@@ -1,4 +1,4 @@
-<!-- 1. SECURITY LOCK SCREEN (STANDARD AUTO-UNLOCK ON 4TH DIGIT) -->
+<!-- SECURITY LOCK SCREEN -->
 @if (!isUnlocked) {
   <div class="lock-container">
     <div class="lock-card">
@@ -61,7 +61,7 @@
   </ion-header>
 
   <ion-content class="ion-padding">
-    <!-- PAGE 1: RECORDING STUDIO WITH SEPARATE TITLE & DESCRIPTION -->
+    <!-- RECORDING PAGE -->
     @if (activeTab === 'record') {
       <div class="studio-wrapper">
         <div class="studio-card">
@@ -116,7 +116,7 @@
             <span class="save-hint">Tap checkmark to finish & save</span>
           }
 
-          <!-- SEPARATE TITLE, DESCRIPTION & TAG INPUTS -->
+          <!-- TITLE, DESCRIPTION/NOTES -->
           <div class="studio-form">
             <ion-item lines="none" class="clean-input-item">
               <ion-input
@@ -154,7 +154,7 @@
       </div>
     }
 
-    <!-- PAGE 2: CLEAN SAVED RECORDINGS LIBRARY -->
+    <!-- SAVED RECORDINGS LIBRARY -->
     @if (activeTab === 'logs') {
       <div class="logs-wrapper">
         <ion-searchbar
@@ -222,6 +222,8 @@
 
               <audio
                 controls
+                controlsList="nodownload noplaybackrate"
+                oncontextmenu="return false;"
                 preload="metadata"
                 [src]="entry.playableUrl"
                 (play)="onAudioPlay($event)"
@@ -235,7 +237,7 @@
       </div>
     }
 
-    <!-- ACCESSIBLE BOTTOM SHEET FOR EDITING TITLE, DESCRIPTION & CATEGORY -->
+    <!-- BOTTOM SHEET FOR EDITING TITLE, DESCRIPTION & CATEGORY -->
     @if (editingEntry !== null) {
       <div
         class="sheet-backdrop"
@@ -303,7 +305,7 @@
       </div>
     }
 
-    <!-- NATIVE DELETE CONFIRMATION ALERT -->
+    <!-- DELETE CONFIRMATION ALERT -->
     <ion-alert
       [isOpen]="entryPendingDelete !== null"
       header="Delete Voice Log?"
@@ -312,7 +314,7 @@
       (didDismiss)="entryPendingDelete = null">
     </ion-alert>
 
-    <!-- NATIVE FEEDBACK TOAST -->
+    <!-- FEEDBACK TOAST -->
     <ion-toast
       [isOpen]="isToastOpen"
       [message]="toastMessage"

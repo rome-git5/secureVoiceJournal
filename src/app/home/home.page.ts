@@ -139,6 +139,7 @@ export class HomePage implements OnInit, OnDestroy {
   private recordingStartTime = 0;
   private accumulatedMs = 0;
   private hasMicPermission = false;
+  private currentlyPlayingAudio: HTMLAudioElement | null = null;
 
   constructor() {
     addIcons({
@@ -206,15 +207,20 @@ export class HomePage implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopTimer();
+    this.stopActiveAudio();
   }
 
   switchTab(tab: string): void {
     if (tab === 'record' || tab === 'logs') {
+      if (tab === 'record') {
+        this.stopActiveAudio();
+      }
       this.activeTab = tab;
+      this.cdr.detectChanges();
     }
   }
 
-  // --- SECURITY & LOCK METHODS (AUTO-SUBMIT ON 4TH DIGIT) ---
+  // SECURITY & LOCK METHODS (AUTO-SUBMIT ON 4TH DIGIT)
   async onPinDigitInput(value: string): Promise<void> {
     const cleaned = (value || '').replace(/\D/g, '').slice(0, 4);
     this.pinInput = cleaned;
@@ -286,12 +292,10 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   private async completeUnlock(): Promise<void> {
-    // Blur active PIN input if focused so keyboard closes cleanly
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
 
-    // Run inside NgZone + force ChangeDetectorRef so biometric unlock opens UI immediately
     this.ngZone.run(() => {
       this.isUnlocked = true;
       this.pinError = '';
@@ -301,18 +305,17 @@ export class HomePage implements OnInit, OnDestroy {
 
     try {
       await this.loadEntries();
-      this.ngZone.run(() => {
-        this.cdr.detectChanges();
-      });
     } catch (e) {
       console.error('Load entries error:', e);
     }
   }
 
-  // --- INSTANT START & STOP RECORDING METHODS ---
+  // START RECORDING
   async startNewRecording(event?: Event): Promise<void> {
     event?.stopPropagation();
     if (this.isRecording || this.isBusy) return;
+
+    this.stopActiveAudio();
 
     if (!this.hasMicPermission) {
       const permission = await VoiceRecorder.requestAudioRecordingPermission();
@@ -323,21 +326,30 @@ export class HomePage implements OnInit, OnDestroy {
       }
     }
 
-    this.isBusy = true;
-    this.isRecording = true;
-    this.isPaused = false;
-    this.startTimer();
+    this.ngZone.run(() => {
+      this.isBusy = true;
+      this.isRecording = true;
+      this.isPaused = false;
+      this.startTimer();
+      this.cdr.detectChanges();
+    });
 
     try {
       await VoiceRecorder.startRecording();
     } catch (error) {
       console.error('Start recording error:', error);
-      this.isRecording = false;
-      this.isPaused = false;
-      this.stopTimer();
+      this.ngZone.run(() => {
+        this.isRecording = false;
+        this.isPaused = false;
+        this.stopTimer();
+        this.cdr.detectChanges();
+      });
       this.showToast('Could not start microphone.');
     } finally {
-      this.isBusy = false;
+      this.ngZone.run(() => {
+        this.isBusy = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -345,13 +357,16 @@ export class HomePage implements OnInit, OnDestroy {
     event?.stopPropagation();
     if (!this.isRecording || this.isBusy) return;
 
-    this.isBusy = true;
     const finalMs = this.accumulatedMs + (this.isPaused ? 0 : Date.now() - this.recordingStartTime);
     const durationMs = Math.max(1000, finalMs);
 
-    this.isRecording = false;
-    this.isPaused = false;
-    this.stopTimer();
+    this.ngZone.run(() => {
+      this.isBusy = true;
+      this.isRecording = false;
+      this.isPaused = false;
+      this.stopTimer();
+      this.cdr.detectChanges();
+    });
 
     try {
       const result = await VoiceRecorder.stopRecording();
@@ -364,17 +379,23 @@ export class HomePage implements OnInit, OnDestroy {
           this.newEntryTitle,
           this.newEntryDescription
         );
-        this.newEntryTitle = '';
-        this.newEntryDescription = '';
+        this.ngZone.run(() => {
+          this.newEntryTitle = '';
+          this.newEntryDescription = '';
+          this.activeTab = 'logs';
+          this.cdr.detectChanges();
+        });
         await this.loadEntries();
-        this.activeTab = 'logs';
         this.showToast('Voice log saved securely.');
       }
     } catch (error) {
       console.error('Stop recording error:', error);
       this.showToast('Error saving recording.');
     } finally {
-      this.isBusy = false;
+      this.ngZone.run(() => {
+        this.isBusy = false;
+        this.cdr.detectChanges();
+      });
     }
   }
 
@@ -383,25 +404,53 @@ export class HomePage implements OnInit, OnDestroy {
     if (!this.isRecording || this.isBusy) return;
 
     if (!this.isPaused) {
-      this.isPaused = true;
-      this.pauseTimer();
+      this.ngZone.run(() => {
+        this.isPaused = true;
+        this.pauseTimer();
+        this.cdr.detectChanges();
+      });
       await VoiceRecorder.pauseRecording();
     } else {
-      this.isPaused = false;
-      this.resumeTimer();
+      this.ngZone.run(() => {
+        this.isPaused = false;
+        this.resumeTimer();
+        this.cdr.detectChanges();
+      });
       await VoiceRecorder.resumeRecording();
     }
   }
 
+  // SINGLE PLAY AUDIO
   onAudioPlay(event?: Event): void {
     event?.stopPropagation();
+    const targetAudio = event?.target as HTMLAudioElement | null;
+    if (!targetAudio) return;
+
+    if (this.currentlyPlayingAudio && this.currentlyPlayingAudio !== targetAudio) {
+      this.currentlyPlayingAudio.pause();
+      this.currentlyPlayingAudio.currentTime = 0;
+    }
+
+    this.currentlyPlayingAudio = targetAudio;
   }
 
   onAudioEndedOrPaused(event?: Event): void {
     event?.stopPropagation();
+    const targetAudio = event?.target as HTMLAudioElement | null;
+    if (targetAudio && this.currentlyPlayingAudio === targetAudio) {
+      this.currentlyPlayingAudio = null;
+    }
   }
 
-  // --- CRUD, NATURAL EDIT MODAL, SEARCH & SHARE ---
+  private stopActiveAudio(): void {
+    if (this.currentlyPlayingAudio) {
+      this.currentlyPlayingAudio.pause();
+      this.currentlyPlayingAudio.currentTime = 0;
+      this.currentlyPlayingAudio = null;
+    }
+  }
+
+  // --- CRUD, NATURAL EDIT MODAL, SEARCH & SHARE
   async loadEntries(): Promise<void> {
     const logs = await this.journalService.searchVoiceLogs(this.searchQuery, this.activeFilter);
     this.ngZone.run(() => {
@@ -455,6 +504,7 @@ export class HomePage implements OnInit, OnDestroy {
 
   private async confirmDeleteEntry(): Promise<void> {
     if (!this.entryPendingDelete) return;
+    this.stopActiveAudio();
     await this.journalService.deleteVoiceLog(
       this.entryPendingDelete.id,
       this.entryPendingDelete.audio_file_path
@@ -472,7 +522,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  // --- THEME & HELPERS ---
+  // THEME DARK MODE, NIGHT MODE
   async toggleDarkMode(): Promise<void> {
     this.isDarkMode = !this.isDarkMode;
     this.applyTheme(this.isDarkMode);
@@ -505,7 +555,7 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
-  // --- DRIFT-FREE WALL-CLOCK TIMER ---
+  // DRIFT-FREE WALL-CLOCK TIMER
   private startTimer(): void {
     this.accumulatedMs = 0;
     this.recordingSeconds = 0;
@@ -521,6 +571,7 @@ export class HomePage implements OnInit, OnDestroy {
       if (nextSeconds !== this.recordingSeconds) {
         this.ngZone.run(() => {
           this.recordingSeconds = nextSeconds;
+          this.cdr.detectChanges();
         });
       }
     }, 250);
